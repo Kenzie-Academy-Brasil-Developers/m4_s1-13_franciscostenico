@@ -8,13 +8,9 @@ const userRoute = Router();
 userRoute.post('', fields.check('all', ...fields.register), user.register);
 userRoute.get('', ensure.authentication, ensure.adminOnly, user.readAll);
 userRoute.get('/profile', ensure.authentication, user.readProfile);
-userRoute.patch(
-  '/:id',
-  fields.check('parse', ...fields.updateUser),
-  ensure.authentication,
-  ensure.adminPermissions,
-  user.update
+userRoute.patch( 
+  '/:id', fields.check('parse', ...fields.updateUser), ensure.authentication, ensure.adminPermissions, user.update
 );
-userRoute.delete('/:id', user.delete);
+userRoute.delete('/:id', ensure.authentication, ensure.adminPermissions, user.delete);
 
 export default userRoute;

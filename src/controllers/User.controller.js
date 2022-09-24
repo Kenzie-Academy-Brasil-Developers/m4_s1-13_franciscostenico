@@ -38,7 +38,16 @@ class UsersControllers {
     }
   }
 
-  static delete(request, response) {}
+  static delete(request, response) {
+    try {
+      const { id } = request.params;
+      UserServices.delete(id);
+
+      return response.status(204).send();
+    } catch (error) {
+      return response.status(404).json({ message: error.message });
+    }
+  }
 }
 
 export default UsersControllers;
