@@ -59,7 +59,14 @@ class UserServices {
     return { name, email, isAdm, createdOn, updatedOn, uuid };
   }
 
-  static delete() {}
+  static delete(id) {
+    const userIndex = users.findIndex((user) => user.uuid === id);
+    if (userIndex === -1) {
+      throw new Error('User not found');
+    }
+
+    users.splice(this.userIndex(id), 1);
+  }
 }
 
 export default UserServices;
