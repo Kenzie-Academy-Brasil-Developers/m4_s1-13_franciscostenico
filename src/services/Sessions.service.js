@@ -19,11 +19,11 @@ class SessionServices {
     const token = jwt.sign(
       {
         isAdm: user.isAdm,
+        uuid: user.uuid,
       },
       process.env.SECRET_KEY,
       {
         expiresIn: '24h',
-        subject: user.uuid,
       }
     );
 

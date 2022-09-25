@@ -4,30 +4,19 @@ import { v4 } from 'uuid';
 import users from '../database';
 
 class UserServices {
-  static async register({ name, email, password, isAdm }) {
-    const emailAlreadyExists = users.find((user) => user.email === email);
-    if (emailAlreadyExists) {
-      throw new Error('E-mail already registered');
+  static async register(name, email, password, isAdm) {
+    const alreadyExist = users.some((user) => user.email == email);
+    if (alreadyExist) {
+      throw new Error('Email already on use');
     }
 
-    const hashedPassword = await hash(password, 10);
-    if (!hashedPassword) {
-      throw new Error('E-mail already registered');
-    }
-
+    const hashedKey = await hash(password, 10);
     const now = new Date().toJSON();
     const uuid = v4();
 
-    const newUser = {
-      name,
-      email,
-      isAdm,
-      createdOn: now,
-      updatedOn: now,
-      uuid,
-    };
-    users.push({ ...newUser, password: hashedPassword });
-
+    // prettier-ignore
+    const newUser = {name, email, isAdm, createdOn: now, updatedOn: now, uuid}
+    users.push({ ...newUser, password: hashedKey });
     return newUser;
   }
 
