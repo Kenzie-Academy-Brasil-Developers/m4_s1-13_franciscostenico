@@ -27,7 +27,9 @@ class SessionServices {
       }
     );
 
-    return { user, token };
+    const { name, isAdm, createdOn, updatedOn, uuid } = user;
+    const loggedUser = { name, email, isAdm, createdOn, updatedOn, uuid };
+    return { user: loggedUser, token };
   }
 }
 

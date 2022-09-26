@@ -20,31 +20,32 @@ class UserServices {
     return newUser;
   }
 
-  static readAll() {
+  static list() {
     return users;
   }
 
-  static readProfile(id) {
-    let loggedUser = users.find((user) => user.uuid === id);
-    if (!loggedUser) {
+  static profile(id) {
+    const userProfile = users.find(({ uuid }) => uuid == id);
+    if (!userProfile) {
       throw new Error('User not found');
     }
 
-    delete loggedUser.password;
-    return loggedUser;
+    const { name, email, isAdm, createdOn, updatedOn, uuid } = userProfile;
+    return { name, email, isAdm, createdOn, updatedOn, uuid };
   }
 
-  static update(id, { body }) {
-    const user = users.find((user) => user.uuid === id);
+  static update(id, updates) {
+    const userIndex = users.findIndex(({ uuid }) => uuid == id);
+    const user = users.find(({ uuid }) => uuid == id);
     if (!user) {
       throw new Error('User not found');
     }
 
     const now = new Date().toJSON();
-    const updatedUser = { ...user, ...body, updatedOn: now };
+    const updatedUser = { ...user, ...updates, updatedOn: now };
     const { name, email, isAdm, createdOn, updatedOn, uuid } = updatedUser;
 
-    users.push(updatedUser);
+    users.splice(userIndex, 1, updatedUser);
     return { name, email, isAdm, createdOn, updatedOn, uuid };
   }
 

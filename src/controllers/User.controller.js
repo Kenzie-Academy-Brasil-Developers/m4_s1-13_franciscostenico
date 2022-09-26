@@ -1,11 +1,10 @@
 import services from '../services/User.service';
-import users from '../database/index';
 
 class UsersControllers {
   static async register(request, response) {
     try {
       const { name, email, password, isAdm } = request.body;
-      const newUser = services.register(name, email, password, isAdm);
+      const newUser = await services.register(name, email, password, isAdm);
 
       return response.status(201).send(newUser);
     } catch (error) {
@@ -13,15 +12,15 @@ class UsersControllers {
     }
   }
 
-  static readAll(_, response) {
-    const newUser = services.readAll();
+  static list(_, response) {
+    const newUser = services.list();
     return response.status(200).send(newUser);
   }
 
-  static readProfile(request, response) {
+  static profile(request, response) {
     try {
-      const { sub } = request.user;
-      const userProfile = services.readProfile(sub);
+      const { uuid } = request.user;
+      const userProfile = services.profile(uuid);
 
       return response.status(200).send(userProfile);
     } catch (error) {
@@ -32,7 +31,8 @@ class UsersControllers {
   static update(request, response) {
     try {
       const { id } = request.params;
-      const updatedProfile = services.update(id, request.body);
+      const updates = request.body;
+      const updatedProfile = services.update(id, updates);
 
       return response.status(200).send(updatedProfile);
     } catch (error) {
