@@ -55,7 +55,8 @@ class UserServices {
       throw new Error('User not found');
     }
 
-    users.splice(this.userIndex(id), 1);
+    users.splice(userIndex, 1);
+    return 'User deleted with success';
   }
 }
 

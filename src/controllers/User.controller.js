@@ -43,9 +43,9 @@ class UsersControllers {
   static delete(request, response) {
     try {
       const { id } = request.params;
-      services.delete(id);
+      const deleteMessage = services.delete(id);
 
-      return response.status(204).send();
+      return response.status(200).send({ message: deleteMessage });
     } catch (error) {
       return response.status(404).json({ message: error.message });
     }
