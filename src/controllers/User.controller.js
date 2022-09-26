@@ -1,25 +1,26 @@
-import UserServices from '../services/User.service';
-import users from '../database/index';
+import services from '../services/User.service';
 
 class UsersControllers {
   static async register(request, response) {
     try {
-      const newUser = await UserServices.register(request.body);
+      const { name, email, password, isAdm } = request.body;
+      const newUser = await services.register(name, email, password, isAdm);
+
       return response.status(201).send(newUser);
     } catch (error) {
       return response.status(400).send({ message: error.message });
     }
   }
 
-  static readAll(_, response) {
-    const newUser = UserServices.readAll();
+  static list(_, response) {
+    const newUser = services.list();
     return response.status(200).send(newUser);
   }
 
-  static readProfile(request, response) {
+  static profile(request, response) {
     try {
-      const { sub } = request.user;
-      const userProfile = UserServices.readProfile(sub);
+      const { uuid } = request.user;
+      const userProfile = services.profile(uuid);
 
       return response.status(200).send(userProfile);
     } catch (error) {
@@ -30,7 +31,8 @@ class UsersControllers {
   static update(request, response) {
     try {
       const { id } = request.params;
-      const updatedProfile = UserServices.update(id, request.body);
+      const updates = request.body;
+      const updatedProfile = services.update(id, updates);
 
       return response.status(200).send(updatedProfile);
     } catch (error) {
@@ -41,7 +43,7 @@ class UsersControllers {
   static delete(request, response) {
     try {
       const { id } = request.params;
-      UserServices.delete(id);
+      services.delete(id);
 
       return response.status(204).send();
     } catch (error) {

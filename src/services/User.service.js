@@ -4,58 +4,48 @@ import { v4 } from 'uuid';
 import users from '../database';
 
 class UserServices {
-  static async register({ name, email, password, isAdm }) {
-    const emailAlreadyExists = users.find((user) => user.email === email);
-    if (emailAlreadyExists) {
-      throw new Error('E-mail already registered');
+  static async register(name, email, password, isAdm) {
+    const alreadyExist = users.some((user) => user.email == email);
+    if (alreadyExist) {
+      throw new Error('Email already on use');
     }
 
-    const hashedPassword = await hash(password, 10);
-    if (!hashedPassword) {
-      throw new Error('E-mail already registered');
-    }
-
+    const hashedKey = await hash(password, 10);
     const now = new Date().toJSON();
     const uuid = v4();
 
-    const newUser = {
-      name,
-      email,
-      isAdm,
-      createdOn: now,
-      updatedOn: now,
-      uuid,
-    };
-    users.push({ ...newUser, password: hashedPassword });
-
+    // prettier-ignore
+    const newUser = {name, email, isAdm, createdOn: now, updatedOn: now, uuid}
+    users.push({ ...newUser, password: hashedKey });
     return newUser;
   }
 
-  static readAll() {
+  static list() {
     return users;
   }
 
-  static readProfile(id) {
-    let loggedUser = users.find((user) => user.uuid === id);
-    if (!loggedUser) {
+  static profile(id) {
+    const userProfile = users.find(({ uuid }) => uuid == id);
+    if (!userProfile) {
       throw new Error('User not found');
     }
 
-    delete loggedUser.password;
-    return loggedUser;
+    const { name, email, isAdm, createdOn, updatedOn, uuid } = userProfile;
+    return { name, email, isAdm, createdOn, updatedOn, uuid };
   }
 
-  static update(id, { body }) {
-    const user = users.find((user) => user.uuid === id);
+  static update(id, updates) {
+    const userIndex = users.findIndex(({ uuid }) => uuid == id);
+    const user = users.find(({ uuid }) => uuid == id);
     if (!user) {
       throw new Error('User not found');
     }
 
     const now = new Date().toJSON();
-    const updatedUser = { ...user, ...body, updatedOn: now };
+    const updatedUser = { ...user, ...updates, updatedOn: now };
     const { name, email, isAdm, createdOn, updatedOn, uuid } = updatedUser;
 
-    users.push(updatedUser);
+    users.splice(userIndex, 1, updatedUser);
     return { name, email, isAdm, createdOn, updatedOn, uuid };
   }
 
